@@ -79,20 +79,20 @@ export default {
       if (!this.cookies.uid) return false;
       if (event) this.cookies.uid = event.target.value;
       axios
-        .get('http://aliyun.nana7mi.link/info', { params: this.cookies })
+        .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
         .then(response => { if (response.data.mid != -1) this.bili = response.data })
         .catch(error => console.log(error));
       return true
     },
     getLoginUrl() {
       axios
-        .get('http://aliyun.nana7mi.link/getLoginUrl')
+        .get('https://aliyun.nana7mi.link/getLoginUrl')
         .then(response => this.oauthKey = response.data.data.oauthKey)
         .catch(error => console.log(error));
     },
     getLoginInfo() {
       axios
-        .get('http://aliyun.nana7mi.link/getLoginInfo', { params: { oauthKey: this.oauthKey } })
+        .get('https://aliyun.nana7mi.link/getLoginInfo', { params: { oauthKey: this.oauthKey } })
         .then(response => {
           if (response.data.DedeUserID != -1) {
             this.cookies = {
