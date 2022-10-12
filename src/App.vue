@@ -4,15 +4,15 @@
     src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png" :move="move">
   </Nav>
   <div class="view">
-    <Sider id="sider" :status="siderStatus"></Sider>
+    <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
     <div id="main" :style="'padding-left: ' + siderStatus * 20 + '%;'">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
         <div :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']" style="padding: 0px">
-          <img :src="bili.top_photo" class="topPhoto">
+          <img :src="bili.top_photo.replace('http://', 'https://')" class="topPhoto">
           <div class="linear"></div>
           <div v-if="bili.face" style="width: 100px;position: relative;top:-2.5em;z-index: 3;margin: 0.5em">
-            <img :src="bili.face" :class="[bili.pendant.image ? 'face1' : 'face2', 'bface']" alt>
-            <img :src="bili.pendant.image" style="height: 92px; position: absolute;" alt>
+            <img :src="bili.face.replace('http://', 'https://')" :class="[bili.pendant.image ? 'face1' : 'face2', 'bface']" alt>
+            <img :src="bili.pendant.image.replace('http://', 'https://')" style="height: 92px; position: absolute;" alt>
           </div>
           <div id="name">
             <strong>
