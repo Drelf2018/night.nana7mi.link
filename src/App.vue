@@ -16,7 +16,7 @@
           </div>
           <div id="name">
             <strong>
-              <p :style="'color: ' + bili.vip.nickname_color + '; font-size: 150%;margin:0'">{{ bili.name }}</p>
+              <p :style="'color: ' + bili.vip.nickname_color + '; font-size: 150%;margin:0'">{{ bili.name }}<Medal></Medal></p>
               <span style="color: grey; font-size: 100%" id="subtitle">{{ location }}</span>
             </strong>
           </div>
@@ -37,12 +37,14 @@
 <script>
 import Nav from './components/Nav.vue';
 import Sider from './components/Sider.vue';
+import Medal from './components/Medal.vue';
 
 export default {
   name: 'App',
   components: {
     Nav,
-    Sider
+    Sider,
+    Medal
   },
   mounted() {
     if (!this.getInfo()) {
@@ -54,7 +56,7 @@ export default {
   data() {
     return {
       oauthKey: 0,
-      siderStatus: 1,
+      siderStatus: document.body.offsetWidth >= 900 ? 1: 0,
       location: returnIpData.data.location,
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),

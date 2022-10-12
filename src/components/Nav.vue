@@ -49,4 +49,11 @@ nav {
   border-radius: 7px;
   z-index: 6;
 }
+
+@media screen and (max-width: 900px) {
+  nav {
+    justify-content: space-between
+  }
+}
+
 </style>
