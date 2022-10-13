@@ -1,7 +1,7 @@
 <template>
   <nav>
     <ion-icon class="menu" name="menu-outline" @click="move"></ion-icon>
-    <a href="/"><span class="menu" style="left: 2em;top: 0.4em;">night.nana7mi.link</span></a>
+    <!-- <a href="/"><span class="menu" style="left: 2em;top: 0.4em;">night.nana7mi.link</span></a> -->
     <a :href="href"><img class="eyes" :src="src" alt="eyes"></a>
   </nav>
 </template>
@@ -49,11 +49,4 @@ nav {
   border-radius: 7px;
   z-index: 6;
 }
-
-@media screen and (max-width: 900px) {
-  nav {
-    justify-content: space-between
-  }
-}
-
 </style>

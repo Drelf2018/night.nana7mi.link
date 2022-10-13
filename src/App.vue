@@ -5,18 +5,23 @@
   </Nav>
   <div class="view">
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
-    <div id="main" :style="'padding-left: ' + siderStatus * 20 + '%;'">
+    <div id="main" :style="'left: ' + (siderStatus-1) * 10 + '%;'">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
         <div :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']" style="padding: 0px">
           <img :src="bili.top_photo.replace('http://', 'https://')" class="topPhoto">
           <div class="linear"></div>
           <div v-if="bili.face" style="width: 100px;position: relative;top:-2.5em;z-index: 3;margin: 0.5em">
-            <img :src="bili.face.replace('http://', 'https://')" :class="[bili.pendant.image ? 'face1' : 'face2', 'bface']" alt>
+            <img :src="bili.face.replace('http://', 'https://')"
+              :class="[bili.pendant.image ? 'face1' : 'face2', 'bface']" alt>
             <img :src="bili.pendant.image.replace('http://', 'https://')" style="height: 92px; position: absolute;" alt>
           </div>
           <div id="name">
             <strong>
-              <p :style="'color: ' + bili.vip.nickname_color + '; font-size: 150%;margin:0'">{{ bili.name }}<Medal></Medal></p>
+              <p
+                :style="'color: ' + bili.vip.nickname_color + '; font-size: 150%;margin:0; display: flex; align-items: center;'">
+                {{ bili.name }}
+                <Medal :medal="bili.fans_medal.medal"></Medal>
+              </p>
               <span style="color: grey; font-size: 100%" id="subtitle">{{ location }}</span>
             </strong>
           </div>
@@ -24,12 +29,19 @@
         <div :class="[bili.mid == 0 ? 'open' : 'close', 'show-block']" style="width: min-content;">
           <center>
             <h3 style="margin: 0 auto 0.5em;">扫描二维码登录</h3>
-            <img class="Erweima"
+            <img :v-show="oauthKey" class="Erweima"
               :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
             <h4 style="margin: 0.5em auto 0;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
           </center>
         </div>
       </div>
+
+    </div>
+    <div class="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
+      <h2>
+        你好李鑫
+      </h2>
+      <Swiper speed=5000 height="170px" :banner="banner"></Swiper>
     </div>
   </div>
 </template>
@@ -38,13 +50,15 @@
 import Nav from './components/Nav.vue';
 import Sider from './components/Sider.vue';
 import Medal from './components/Medal.vue';
+import Swiper from './components/Swiper.vue';
 
 export default {
   name: 'App',
   components: {
     Nav,
     Sider,
-    Medal
+    Medal,
+    Swiper
   },
   mounted() {
     if (!this.getInfo()) {
@@ -55,16 +69,15 @@ export default {
   },
   data() {
     return {
-      oauthKey: 0,
-      siderStatus: document.body.offsetWidth >= 900 ? 1: 0,
+      oauthKey: null,
+      siderStatus: document.body.offsetWidth >= 900,
       location: returnIpData.data.location,
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),
       cookies: {
-        uid: this.$cookies.get('uid'),
-        sessdata: this.$cookies.get('sessdata'),
-        bili_jct: this.$cookies.get('bili_jct'),
-        buvid3: ""
+        DedeUserID: this.$cookies.get('DedeUserID'),
+        SESSDATA: this.$cookies.get('SESSDATA'),
+        bili_jct: this.$cookies.get('bili_jct')
       },
       bili: {
         mid: -1,
@@ -72,14 +85,48 @@ export default {
         pendant: { image: "" },
         vip: { nickname_color: "" },
         name: "",
-        top_photo: ""
+        top_photo: "",
+        fans_medal: { medal: "" }
       }
+    }
+  },
+  computed: {
+    banner() {
+      function Banner(link, url) {
+        this.link = link;
+        this.url = url;
+      };
+      var res = [
+        new Banner(
+          "https://www.bilibili.com/video/BV1vJ411B7ng",
+          "https://i2.hdslb.com/bfs/archive/7fe8272ef4c90d07ba2dba968638392f8d5bf490.jpg"
+        ),    
+        new Banner(
+          "https://www.bilibili.com/video/BV1he4y1r79x",
+          "https://i1.hdslb.com/bfs/archive/ca796b3fe2a213c652ebb32469d81511036c7117.jpg"
+        ),
+        new Banner(
+          "https://www.bilibili.com/video/BV1tG411g7Fo",
+          "https://i0.hdslb.com/bfs/archive/b7868c38077aaa66e233499723a4d7490804f861.png"
+        ),
+        new Banner(
+          "https://www.bilibili.com/video/BV1T24y1R7wd",
+          "https://i1.hdslb.com/bfs/archive/ab9738d7aee96044183b61c7dd9c95eb1ec17ed1.jpg"
+        ),
+        new Banner(
+          "https://www.bilibili.com/video/BV1pR4y1W7M7",
+          "https://i0.hdslb.com/bfs/new_dyn/8b90b7582c6fa3023eda3ffb58bf8eeb1464240042.png"
+        ),
+        new Banner("", "https://i0.hdslb.com/bfs/new_dyn/3c611630235bca6cc7eadca431573c1f1464240042.png")
+      ];
+      res.push(res[0]);
+      return res;
     }
   },
   methods: {
     getInfo(event = null) {
-      if (!this.cookies.uid) return false;
-      if (event) this.cookies.uid = event.target.value;
+      if (!this.cookies.DedeUserID) return false;
+      if (event) this.cookies.DedeUserID = event.target.value;
       axios
         .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
         .then(response => { if (response.data.mid != -1) this.bili = response.data })
@@ -97,14 +144,9 @@ export default {
         .get('https://aliyun.nana7mi.link/getLoginInfo', { params: { oauthKey: this.oauthKey } })
         .then(response => {
           if (response.data.DedeUserID != -1) {
-            this.cookies = {
-              uid: response.data.DedeUserID,
-              sessdata: response.data.SESSDATA,
-              bili_jct: response.data.bili_jct,
-              buvid3: ""
-            }
-            this.$cookies.set('uid', this.cookies.uid);
-            this.$cookies.set('sessdata', this.cookies.sessdata);
+            this.cookies = response.data;
+            this.$cookies.set('DedeUserID', this.cookies.DedeUserID);
+            this.$cookies.set('SESSDATA', this.cookies.SESSDATA);
             this.$cookies.set('bili_jct', this.cookies.bili_jct);
             clearInterval(this.plan);
             this.getInfo();
@@ -150,9 +192,29 @@ export default {
 }
 
 #main {
-  width: 75%;
+  position: relative;
+  width: 55%;
   margin: 0px auto;
   transition: all 0.5s;
+}
+
+.subsider {
+  top: 56px;
+  width: 20%;
+  height: calc(200vh - 56px);
+  position: fixed;
+  transition: all 0.5s;
+}
+
+@media screen and (max-width: 900px) {
+  #main {
+    left: 0% !important;
+    width: 75%;
+  }
+
+  .subsider {
+    display: none;
+  }
 }
 
 .show-block {
@@ -173,12 +235,12 @@ export default {
 }
 
 .close {
-  left: 100%;
+  /* left: 100%; */
   opacity: 0;
 }
 
 .open {
-  left: 0%;
+  /* left: 0%; */
   opacity: 1;
 }
 

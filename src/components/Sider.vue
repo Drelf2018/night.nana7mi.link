@@ -71,13 +71,11 @@ export default {
 
 <style>
 .sider-open {
-    transition: all 0.5s cubic-bezier(0, 0.9, 0.1, 1) 0s;
     left: 0%;
 }
 
 .sider-close {
-    transition: all 0.5s cubic-bezier(0.1, 0, 1, 0.1) 0s;
-    left: -100%;
+    left: -20%;
 }
 
 .link {
@@ -105,15 +103,18 @@ export default {
     width: 20%;
     height: calc(200vh - 56px);
     position: fixed;
+    transition: all 0.5s;
     background-color: #FFF;
     border-right: 1px solid rgb(216, 222, 228);
     z-index: 4;
 }
 
 @media screen and (max-width: 900px) {
+    .sider-close {
+        left: -100%;
+    }
     .hidden-sider {
         width: 100%;
-        transition: all 0.5s;
     }
 }
 

@@ -1,15 +1,14 @@
 <template>
-    <div class="space-fans-medal">
-        <div class="medal-box fans-medal" style="padding-left: 6px;"><img
-                src="https://i0.hdslb.com/bfs/activity-plat/static/20200716/1d0c5a1b042efb59f46d4ba1286c6727/icon-guard3.png@18w_18h_1c.webp"
-                alt="舰长" class="medal-flag">
-            <div class="medal-true-love">
-                <div class="tiny">脆鲨</div>
+    <div :style="'display: inline-block; margin-left: ' + (medal.guard_level ? '14px;' : '4px;')">
+        <div class="medal-box">
+            <img v-if="medal.guard_level" class="medal-flag"
+                :src="'https://i0.hdslb.com/bfs/activity-plat/static/20200716/1d0c5a1b042efb59f46d4ba1286c6727/icon-guard' + medal.guard_level + '.png@20w_20h_1c.webp'">
+            <div class="medal-true-love"
+                :style="'padding: 0.5em ' + (medal.guard_level ? '3px' : '4px') + ' 0.5em ' + (medal.guard_level ? '8px;' : '4px;') + 'border-color:' + int2rgb(medal.medal_color_border) + '; background-image: linear-gradient(90deg, ' + int2rgb(medal.medal_color_start) + ', ' + int2rgb(medal.medal_color_end) + ');'">
+                {{ medal.medal_name }}
             </div>
-            <div class="medal-level" style="border-color: rgb(103, 232, 255); color: rgb(6, 21, 76);">
-                <div class="tiny">
-                    27
-                </div>
+            <div class="medal-level" :style="'border-color:' + int2rgb(medal.medal_color_border) + '; color: rgb(6, 21, 76);'">
+                {{ medal.level }}
             </div>
         </div>
     </div>
@@ -17,41 +16,38 @@
 
 <script>
 export default {
-  name: 'Medal',
-  props: {}
+    name: 'Medal',
+    props: {
+        medal: Object
+    },
+    methods: {
+        int2rgb(n) {
+            var r = n >> 16;
+            var g = (n >> 8) - (r << 8);
+            var b = n - (r << 16) - (g << 8);
+            return "rgb(" + r + "," + g + "," + b + ")"
+        }
+    }
 }
 </script>
 
 <style>
-.space-fans-medal {
-    display: inline-block;
-    /* vertical-align: middle; */
-    margin-left: 5px;
-}
-
-.fans-medal {
-    display: flex;
-    cursor: pointer;
-}
-
 .medal-box {
+    cursor: pointer;
     position: relative;
     vertical-align: middle;
-    margin-left: 3px;
-    height: 16px;
+    height: 20px;
     line-height: 10px;
-    display: -ms-inline-flexbox;
     display: inline-flex;
-    font-size: 8px;
+    font-size: 10px;
     color: #f25d8e;
-    border-radius: 1px;
+    border-radius: 2px;
 }
 
 .medal-flag {
+    height: 100%;
     position: absolute;
-    transform: translate(-50%,-1px);
-    width: 18px;
-    height: 18px;
+    transform: translate(-50%, -1px);
 }
 
 .medal-true-love {
@@ -59,34 +55,16 @@ export default {
     text-align: center;
     box-sizing: content-box;
     border-right-width: 0;
-    border-bottom-left-radius: 1px;
-    border-top-left-radius: 1px;
-    padding-left: 2px;
-    padding-right: 2px;
+    border-radius: 2px 0px 0px 2px;
     white-space: nowrap;
-    width: 22px;
     padding-left: 8px;
-    border-color: rgb(103, 232, 255);
     color: rgb(255, 255, 255);
-    background-image: linear-gradient(90deg, rgb(6, 21, 76), rgb(104, 136, 241));
 }
 
 .medal-level {
-    border: 0.5px solid #f25d8e;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    border-bottom-right-radius: 1px;
-    border-top-right-radius: 1px;
-    width: 18px;
+    border: 0.5px solid rgb(242, 93, 142);
+    border-radius: 0px 2px 2px 0px;
+    padding: 0.5em 2px;
     background: #fff;
-}
-
-.tiny {
-    transform: scale(.5);
-    width: 200%;
-    height: 200%;
-    font-weight: 400;
-    transform-origin: left 30%;
-    font-size: 20px;
 }
 </style>
