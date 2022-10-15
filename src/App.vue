@@ -7,7 +7,7 @@
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
     <div class="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
-      <iframe src="http://music.163.com/outchain/player?type=0&amp;id=7690347404&amp;auto=1&amp;height=430" width="95%" height="450" frameborder="no" marginwidth="0" marginheight="6"></iframe>
+      <iframe src="https://music.163.com/outchain/player?type=0&amp;id=7690347404&amp;auto=1&amp;height=430" width="95%" height="450" frameborder="no" marginwidth="0" marginheight="6"></iframe>
       <div style="width: 90%" >
         <a href="/hehe.png"><img src="/hehe.png" style="width: 100%"></a>
       </div>
