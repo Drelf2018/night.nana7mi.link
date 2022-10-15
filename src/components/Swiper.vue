@@ -1,5 +1,5 @@
 <template>
-    <div id="swiperBox" @mouseenter="stop" @mouseleave="start" :style="{'height': height}">
+    <div id="swiperBox" @mouseenter="stop" @mouseleave="start" :style="{'width': width, 'height': '172px'}">
         <div class="hidden">
             <div id="swiper">
                 <div class="imgDiv" v-for="obj in banner">
@@ -23,7 +23,7 @@ export default {
     name: 'Swiper',
     props: {
         speed: String,
-        height: String,
+        width: String,
         banner: null
     },
     data() {
@@ -35,7 +35,7 @@ export default {
         }
     },
     updated() {
-        this.updateStyle();
+        // this.updateStyle();
     },
     methods: {
         updateStyle() {
@@ -47,17 +47,19 @@ export default {
                     var currentImg = new Image();
                     currentImg.src = obj.url;
                     setTimeout(() => {
-                        var alpha = currentImg.width / currentImg.height;
+                        var alpha = currentImg.height / currentImg.width;
                         if(alpha > maxAlpha) maxAlpha = alpha;
                     }, 100);
                 }
             )
+            console.log(maxAlpha);
             setTimeout(() => {
+                console.log(maxAlpha);
                 if (maxAlpha)
-                    document.getElementById('swiperBox').style.width = maxAlpha * parseInt(this.height) + 'px';
-                else
-                    document.getElementById('swiperBox').style.width = '366px';
-            }, 300);
+                    document.getElementById('swiperBox').style.height = maxAlpha * parseInt(this.width) + 'px';
+                // else
+                //     document.getElementById('swiperBox').style.height = '366px';
+            }, 1);
         },
         stop() {
             if (this.timer) {
@@ -123,12 +125,11 @@ export default {
 
 <style>
 #swiperBox {
-    width: 271px;
-    height: 170px;
     position: relative;
     border-radius: 10px;
-    /* box-shadow: 0 7px 10px grey; */
     z-index: 1;
+    margin-bottom: 6px;
+    box-shadow: 0 5px 10px #ccc;
 }
 
 .btn {

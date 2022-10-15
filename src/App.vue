@@ -5,6 +5,13 @@
   </Nav>
   <div class="view">
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
+    <div class="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
+      <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
+      <iframe src="http://music.163.com/outchain/player?type=0&amp;id=7690347404&amp;auto=1&amp;height=430" width="95%" height="450" frameborder="no" marginwidth="0" marginheight="6"></iframe>
+      <div style="width: 90%" >
+        <a href="/hehe.png"><img src="hehe.png" style="width: 100%"></a>
+      </div>
+    </div>
     <div id="main" :style="'left: ' + (siderStatus-1) * 10 + '%;'">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
         <div :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']" style="padding: 0px">
@@ -20,12 +27,16 @@
               <p
                 :style="'color: ' + bili.vip.nickname_color + '; font-size: 150%;margin:0; display: flex; align-items: center;'">
                 {{ bili.name }}
-                <Medal :medal="bili.fans_medal.medal"></Medal>
+                <Medal v-if="bili.fans_medal.medal" :medal="bili.fans_medal.medal"></Medal>
               </p>
               <span style="color: grey; font-size: 100%" id="subtitle">{{ location }}</span>
             </strong>
           </div>
         </div>
+        <h2>ToDo List:</h2>
+        <p>1. Dynamic Island</p>
+        <p>2. Main Function</p>
+        <p>3. Left Sider</p>
         <div :class="[bili.mid == 0 ? 'open' : 'close', 'show-block']" style="width: min-content;">
           <center>
             <h3 style="margin: 0 auto 0.5em;">扫描二维码登录</h3>
@@ -35,13 +46,6 @@
           </center>
         </div>
       </div>
-
-    </div>
-    <div class="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
-      <h2>
-        你好李鑫
-      </h2>
-      <Swiper speed=5000 height="170px" :banner="banner"></Swiper>
     </div>
   </div>
 </template>
@@ -70,7 +74,7 @@ export default {
   data() {
     return {
       oauthKey: null,
-      siderStatus: document.body.offsetWidth >= 900,
+      siderStatus: 0,
       location: returnIpData.data.location,
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),
@@ -199,10 +203,14 @@ export default {
 }
 
 .subsider {
-  top: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-left: 1px solid rgb(216, 222, 228);
+  padding-top: 1em;
   width: 20%;
-  height: calc(200vh - 56px);
-  position: fixed;
+  float: right;
+  position: relative;
   transition: all 0.5s;
 }
 

@@ -25,7 +25,7 @@ nav {
   background-color: rgb(33, 37, 41);
   display: flex;
   justify-content: center;
-  z-index: 3;
+  z-index: 4;
 }
 
 .menu {
@@ -34,7 +34,7 @@ nav {
   position: fixed;
   color: #FFF;
   font-size: 1.8em;
-  z-index: 4;
+  z-index: 5;
   transition: all 0.3s;
 }
 
@@ -47,6 +47,6 @@ nav {
   height: 40px;
   display: block;
   border-radius: 7px;
-  z-index: 6;
+  z-index: 7;
 }
 </style>
