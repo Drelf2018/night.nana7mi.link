@@ -9,4 +9,4 @@ with open('.\\dist\\index.html', 'r', encoding='utf-8') as fp:
 open('.\\dist\\CNAME', 'w', encoding='utf-8').write('night.nana7mi.link')
 commit = ('"' + ' '.join(sys.argv[1:]) + '"') if len(sys.argv) > 1 else 'update'
 os.system('auto.bat '+commit)
-os.system('start https://github.com/Drelf2018/night.nana7mi.link')
+os.system('start https://github.com/Drelf2018/night.nana7mi.link/tree/gh-pages')

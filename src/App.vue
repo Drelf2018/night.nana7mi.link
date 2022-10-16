@@ -1,16 +1,21 @@
 <template>
   <a id="top"></a>
-  <Nav href='https://t.bilibili.com/682043379459031137'
-    src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png" :move="move">
+  <Nav 
+    href='https://t.bilibili.com/682043379459031137'
+    src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png"
+    :move="move"
+    :islandStatus="oauthKey != null">
+    <h3 style="margin: 0.5em auto;">扫描二维码登录</h3>
+    <img class="Erweima" :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
+    <h4 style="margin: 0.5em auto;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
   </Nav>
   <div class="view">
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
-    <div class="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
+    <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
-      <iframe src="https://music.163.com/outchain/player?type=0&amp;id=7690347404&amp;auto=1&amp;height=430" width="95%" height="450" frameborder="no" marginwidth="0" marginheight="6"></iframe>
-      <div style="width: 90%" >
-        <a href="/hehe.png"><img src="/hehe.png" style="width: 100%"></a>
-      </div>
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110 src="//music.163.com/outchain/player?type=0&id=7690347404&auto=1&height=90"></iframe>
+      <div id="insertArea"></div>
+      <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
     </div>
     <div id="main" :style="'left: ' + (siderStatus-1) * 10 + '%;'">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
@@ -34,17 +39,7 @@
           </div>
         </div>
         <h2>ToDo List:</h2>
-        <p>1. Dynamic Island</p>
-        <p>2. Main Function</p>
-        <p>3. Left Sider</p>
-        <div :class="[bili.mid == 0 ? 'open' : 'close', 'show-block']" style="width: min-content;">
-          <center>
-            <h3 style="margin: 0 auto 0.5em;">扫描二维码登录</h3>
-            <img :v-show="oauthKey" class="Erweima"
-              :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
-            <h4 style="margin: 0.5em auto 0;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
-          </center>
-        </div>
+        <p>1. Main Function</p>
       </div>
     </div>
   </div>
@@ -65,11 +60,7 @@ export default {
     Swiper
   },
   mounted() {
-    if (!this.getInfo()) {
-      this.getLoginUrl();
-      this.bili.mid = 0;
-      this.plan = setInterval(this.getLoginInfo, 3000);
-    }
+    this.getInfo()
   },
   data() {
     return {
@@ -79,9 +70,9 @@ export default {
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),
       cookies: {
-        DedeUserID: this.$cookies.get('DedeUserID'),
-        SESSDATA: this.$cookies.get('SESSDATA'),
-        bili_jct: this.$cookies.get('bili_jct')
+        DedeUserID: this.$cookies.get('DedeUserID') || 0,
+        SESSDATA: this.$cookies.get('SESSDATA') || 0,
+        bili_jct: this.$cookies.get('bili_jct') || 0
       },
       bili: {
         mid: -1,
@@ -120,22 +111,31 @@ export default {
         new Banner(
           "https://www.bilibili.com/video/BV1pR4y1W7M7",
           "https://i0.hdslb.com/bfs/new_dyn/8b90b7582c6fa3023eda3ffb58bf8eeb1464240042.png"
-        ),
-        new Banner("", "https://i0.hdslb.com/bfs/new_dyn/3c611630235bca6cc7eadca431573c1f1464240042.png")
+        )
       ];
       res.push(res[0]);
       return res;
     }
   },
   methods: {
+    addHtml(event) {
+      var tempNode = document.createElement('div');
+      tempNode.innerHTML = event.target.value;
+      document.getElementById('insertArea').appendChild(tempNode)
+    },
     getInfo(event = null) {
       if (!this.cookies.DedeUserID) return false;
       if (event) this.cookies.DedeUserID = event.target.value;
       axios
         .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
-        .then(response => { if (response.data.mid != -1) this.bili = response.data })
+        .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid})
+        .then(code => {
+          if (code != -1) return; 
+          this.getLoginUrl();
+          this.bili.mid = 0;
+          this.plan = setInterval(this.getLoginInfo, 3000);
+        })
         .catch(error => console.log(error));
-      return true
     },
     getLoginUrl() {
       axios
@@ -153,6 +153,7 @@ export default {
             this.$cookies.set('SESSDATA', this.cookies.SESSDATA);
             this.$cookies.set('bili_jct', this.cookies.bili_jct);
             clearInterval(this.plan);
+            this.oauthKey = null;
             this.getInfo();
           }
         })
@@ -202,7 +203,7 @@ export default {
   transition: all 0.5s;
 }
 
-.subsider {
+#subsider {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -220,7 +221,7 @@ export default {
     width: 75%;
   }
 
-  .subsider {
+  #subsider {
     display: none;
   }
 }
@@ -237,6 +238,7 @@ export default {
 
 .Erweima {
   width: 150px;
+  height: 150px;
   padding: 0.5em;
   border-radius: 0.5em;
   border: 1px solid rgb(222, 222, 222);

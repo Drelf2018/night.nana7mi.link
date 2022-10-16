@@ -23,20 +23,20 @@
 
             <div class="content">
                 <h2 style="margin-top: 0.7em; margin-bottom: 0.3em">UI 灵感</h2>
-                <div style="display: flex;justify-content: space-between; margin-bottom: 1.75em;flex-direction: column">
+                <div style="display: flex;justify-content: space-between; margin-bottom: 1.75em;">
                     <IconBtn
                         href="https://github.com/AceDroidX/SuperSpider"
                         src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
-                        title="SuperSpider"
+                        title="BiliSC"
                         subtitle="Vue 2"
-                        style="width: 60%; margin-bottom: 0.5em;">
+                        style="width: 48%;">
                     </IconBtn>
                     <IconBtn
                         href="https://github.com/brainbush/matsuri.icu"
                         src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
-                        title="matsuri.icu"
+                        title="matsuri"
                         subtitle="Vue 3"
-                        style="width: 60%; ">
+                        style="width: 48%;">
                     </IconBtn>
                 </div>
             </div>
@@ -57,17 +57,6 @@ export default {
     props: {
         status: Number,
         changeUID: Function
-    },
-    data() {
-        return {
-            repositories: {
-                "UI 抄袭自": [
-                    { uid: 15519693, name: "" },
-                    { uid: 10243794, name: "" },
-                    { uid: 22138497, name: "vuetifyjs/vuetify" },
-                ]
-            }
-        };
     },
     components: { IconBtn }
 }

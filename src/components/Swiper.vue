@@ -52,13 +52,9 @@ export default {
                     }, 100);
                 }
             )
-            console.log(maxAlpha);
             setTimeout(() => {
-                console.log(maxAlpha);
                 if (maxAlpha)
                     document.getElementById('swiperBox').style.height = maxAlpha * parseInt(this.width) + 'px';
-                // else
-                //     document.getElementById('swiperBox').style.height = '366px';
             }, 1);
         },
         stop() {

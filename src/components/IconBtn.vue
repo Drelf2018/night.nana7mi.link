@@ -2,7 +2,7 @@
     <a :href="href">
         <div class="link">
             <img :src="src" class="github">
-            <div style="display: inline;">
+            <div style="display: inline;padding-right: 0.5em;">
                 <strong>{{ title }}</strong><br />
                 <span style="color: grey;">{{ subtitle }}</span>
             </div>
