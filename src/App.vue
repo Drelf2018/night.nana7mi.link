@@ -123,18 +123,19 @@ export default {
       tempNode.innerHTML = event.target.value;
       document.getElementById('insertArea').appendChild(tempNode)
     },
+    longQuery(code=-1) {
+      if (code != -1) return; 
+      this.getLoginUrl();
+      this.bili.mid = 0;
+      this.plan = setInterval(this.getLoginInfo, 3000);
+    },
     getInfo(event = null) {
-      if (!this.cookies.DedeUserID) return false;
+      if (!this.cookies.DedeUserID) this.longQuery();
       if (event) this.cookies.DedeUserID = event.target.value;
       axios
         .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
         .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid})
-        .then(code => {
-          if (code != -1) return; 
-          this.getLoginUrl();
-          this.bili.mid = 0;
-          this.plan = setInterval(this.getLoginInfo, 3000);
-        })
+        .then(this.longQuery)
         .catch(error => console.log(error));
     },
     getLoginUrl() {
