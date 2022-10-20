@@ -1,0 +1,8 @@
+bilibili-api-python
+fastapi
+uvicorn
+httpx
+aiowebsocket
+apscheduler
+pydantic
+pyinstaller

@@ -1,0 +1,14 @@
+- limited_density: 0.0
+  listening_words:
+  - 晚安
+  - 拜拜
+  - 再见
+  send_rate: 1.0
+  send_words:
+  - 晚安1
+  - 晚安2
+  - 晚安3
+  - 晚安4
+  - 晚安5
+  - 晚安6
+  - 晚安7

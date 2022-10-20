@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+bilibili-api-python = "*"
+fastapi = "*"
+uvicorn = "*"
+httpx = "*"
+aiowebsocket = "*"
+apscheduler = "*"
+pydantic = "*"
+pyinstaller = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"

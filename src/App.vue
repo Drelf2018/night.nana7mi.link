@@ -1,19 +1,19 @@
 <template>
   <a id="top"></a>
-  <Nav 
-    href='https://t.bilibili.com/682043379459031137'
-    src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png"
-    :move="move"
+  <Nav href='https://t.bilibili.com/682043379459031137'
+    src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png" :move="move"
     :islandStatus="oauthKey != null">
     <h3 style="margin: 0.5em auto;">扫描二维码登录</h3>
-    <img class="Erweima" :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
+    <img class="Erweima"
+      :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
     <h4 style="margin: 0.5em auto;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
   </Nav>
   <div class="view">
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
-      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110 src="//music.163.com/outchain/player?type=0&id=7690347404&auto=1&height=90"></iframe>
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
+        src="//music.163.com/outchain/player?type=0&id=7690347404&auto=1&height=90"></iframe>
       <div id="insertArea"></div>
       <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
     </div>
@@ -38,8 +38,7 @@
             </strong>
           </div>
         </div>
-        <h2>ToDo List:</h2>
-        <p>1. Main Function</p>
+        <ConfigArea v-for="cid in cids" :config="configs[cid]" :cookies="cookies" :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']"></ConfigArea>
       </div>
     </div>
   </div>
@@ -50,6 +49,7 @@ import Nav from './components/Nav.vue';
 import Sider from './components/Sider.vue';
 import Medal from './components/Medal.vue';
 import Swiper from './components/Swiper.vue';
+import ConfigArea from './components/ConfigArea.vue';
 
 export default {
   name: 'App',
@@ -57,10 +57,12 @@ export default {
     Nav,
     Sider,
     Medal,
-    Swiper
+    Swiper,
+    ConfigArea
   },
   mounted() {
-    this.getInfo()
+    this.getInfo();
+    this.getConfigs();
   },
   data() {
     return {
@@ -69,6 +71,13 @@ export default {
       location: returnIpData.data.location,
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),
+      cids: (localStorage.getItem('configs') || "0").split(","), 
+      configs: [{
+        limited_density: null,
+        send_rate: null,
+        listening_words: [],
+        send_words: []
+      }],
       cookies: {
         DedeUserID: this.$cookies.get('DedeUserID') || 0,
         SESSDATA: this.$cookies.get('SESSDATA') || 0,
@@ -95,7 +104,7 @@ export default {
         new Banner(
           "https://www.bilibili.com/video/BV1vJ411B7ng",
           "https://i2.hdslb.com/bfs/archive/7fe8272ef4c90d07ba2dba968638392f8d5bf490.jpg"
-        ),    
+        ),
         new Banner(
           "https://www.bilibili.com/video/BV1he4y1r79x",
           "https://i1.hdslb.com/bfs/archive/ca796b3fe2a213c652ebb32469d81511036c7117.jpg"
@@ -123,18 +132,32 @@ export default {
       tempNode.innerHTML = event.target.value;
       document.getElementById('insertArea').appendChild(tempNode)
     },
-    longQuery(code=-1) {
-      if (code != -1) return; 
+    longQuery(code = -1) {
+      if (code != -1) return;
       this.getLoginUrl();
       this.bili.mid = 0;
       this.plan = setInterval(this.getLoginInfo, 3000);
+    },
+    getConfigs() {
+      axios
+        .get('https://gh.nana7mi.link/query?cid=-1')
+        .then(response => {
+          if (response.data.code == 1) {
+            this.configs = response.data.data;
+            for (var i = 0; i < this.configs.length; i++) {
+              this.configs[i].listening_words = this.configs[i].listening_words.join('\n')
+              this.configs[i].send_words = this.configs[i].send_words.join('\n')
+            }
+          }
+        })
+        .catch(error => console.log(error));
     },
     getInfo(event = null) {
       if (!this.cookies.DedeUserID) this.longQuery();
       if (event) this.cookies.DedeUserID = event.target.value;
       axios
         .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
-        .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid})
+        .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid })
         .then(this.longQuery)
         .catch(error => console.log(error));
     },
@@ -255,8 +278,8 @@ export default {
   opacity: 1;
 }
 
-input {
-  display: block;
+input,
+textarea {
   box-sizing: border-box;
   width: 100%;
   height: 2.5em;
@@ -269,10 +292,20 @@ input {
   transition: all 0.2s;
 }
 
-input:focus {
+input:focus,
+textarea:focus {
   border-color: #86b7fe;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+
+textarea {
+  /* width: 48% !important; */
+  resize: vertical;
+  height: 10em !important;
+  font-family: 'Microsoft Yahei';
+  padding: 0.5em 0px 0.5em 0.5em !important;
+  overflow-y: hidden;
 }
 
 .bface {
