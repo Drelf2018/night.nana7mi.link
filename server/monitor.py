@@ -19,7 +19,7 @@ class Monitor:
         """连接 biligo-ws-live 的适配器"""
         self.BASEURL = BASEURL
         self.aid = aid  #  接入 biligo-ws-live 时的 id 用来区分不同监控程序
-        self.url = 'wss://blive.ericlamm.xyz/ws?id='+aid # biligo-ws-live 运行地址
+        self.url = BASEURL + f'/ws?id={aid}' # biligo-ws-live 运行地址
 
     def update(self, credential: Credential, config: Config):
         roomid = str(config.roomid)

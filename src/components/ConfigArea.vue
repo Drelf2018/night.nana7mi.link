@@ -55,16 +55,14 @@ export default {
             this.running *= -1
             axios
                 .post('https://gh.nana7mi.link/update', {
-                    data: {
-                        roomid: String(this.running*this.roomid),
-                        SESSDATA: this.cookies.SESSDATA,
-                        bili_jct: this.cookies.bili_jct,
-                        DedeUserID: this.cookies.DedeUserID,
-                        listening_words: this.config.listening_words.split("\n"),
-                        send_words: this.config.send_words.split("\n"),
-                        limited_density: this.config.limited_density,
-                        send_rate: this.config.send_rate
-                    }
+                    roomid: String(this.running*this.roomid),
+                    SESSDATA: this.cookies.SESSDATA,
+                    bili_jct: this.cookies.bili_jct,
+                    DedeUserID: this.cookies.DedeUserID,
+                    listening_words: this.config.listening_words.split("\n"),
+                    send_words: this.config.send_words.split("\n"),
+                    limited_density: this.config.limited_density,
+                    send_rate: this.config.send_rate
                 })
                 .catch(error => console.log(error));
         }
