@@ -4,40 +4,40 @@
             <div class="content">
                 <h2 style="margin-top: 0.7em; margin-bottom: 0.3em">本页面</h2>
                 <div style="display: flex;justify-content: space-between; margin-bottom: 1.75em;">
-                    <IconBtn
+                    <IconTag
                         href="https://github.com/Drelf2018/night.nana7mi.link"
                         src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
                         title="前端"
                         subtitle="Vue 3"
                         style="width: 48%">
-                    </IconBtn>
-                    <IconBtn
+                    </IconTag>
+                    <IconTag
                         href="https://github.com/Drelf2018/api"
                         src="https://www.aliyun.com/favicon.ico"
                         title="后端"
                         subtitle="Aliyun"
                         style="width: 48%">
-                    </IconBtn>
+                    </IconTag>
                 </div>
             </div>
 
             <div class="content">
                 <h2 style="margin-top: 0.7em; margin-bottom: 0.3em">UI 灵感</h2>
                 <div style="display: flex;justify-content: space-between; margin-bottom: 1.75em;">
-                    <IconBtn
+                    <IconTag
                         href="https://github.com/AceDroidX/SuperSpider"
                         src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
                         title="BiliSC"
-                        subtitle="Vue 2"
+                        subtitle="Vue 3"
                         style="width: 48%;">
-                    </IconBtn>
-                    <IconBtn
+                    </IconTag>
+                    <IconTag
                         href="https://github.com/brainbush/matsuri.icu"
                         src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
                         title="matsuri"
                         subtitle="Vue 3"
                         style="width: 48%;">
-                    </IconBtn>
+                    </IconTag>
                 </div>
             </div>
 
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import IconBtn from './IconBtn.vue';
+import IconTag from './IconTag.vue';
 
 export default {
     name: "Sider",
@@ -58,7 +58,7 @@ export default {
         status: Number,
         changeUID: Function
     },
-    components: { IconBtn }
+    components: { IconTag }
 }
 </script>
 

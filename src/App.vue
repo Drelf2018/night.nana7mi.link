@@ -12,7 +12,7 @@
     <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
-      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
+      <iframe id="music163" frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
         src="//music.163.com/outchain/player?type=0&id=7690347404&auto=1&height=90"></iframe>
       <div id="insertArea"></div>
       <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
@@ -38,7 +38,8 @@
             </strong>
           </div>
         </div>
-        <ConfigArea v-for="cid in cids" :config="configs[cid]" :cookies="cookies" :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']"></ConfigArea>
+        <ConfigArea v-if="configs.length" v-for="cid in cids" :cid="cid" :config="configs[cid]" :cookies="cookies" :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']"></ConfigArea>
+        <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
   </div>
@@ -50,6 +51,7 @@ import Sider from './components/Sider.vue';
 import Medal from './components/Medal.vue';
 import Swiper from './components/Swiper.vue';
 import ConfigArea from './components/ConfigArea.vue';
+import IconBtn from './components/IconBtn.vue';
 
 export default {
   name: 'App',
@@ -58,8 +60,9 @@ export default {
     Sider,
     Medal,
     Swiper,
-    ConfigArea
-  },
+    ConfigArea,
+    IconBtn
+},
   mounted() {
     this.getInfo();
     this.getConfigs();
@@ -71,17 +74,11 @@ export default {
       location: returnIpData.data.location,
       changeUID: this.debounce(this.getInfo),
       move: this.throttle(() => this.siderStatus ^= 1),
-      cids: (localStorage.getItem('configs') || "0").split(","), 
-      configs: [{
-        limited_density: null,
-        send_rate: null,
-        listening_words: [],
-        send_words: []
-      }],
+      cids: (localStorage.getItem('configs') || "").split(","),
       cookies: {
-        DedeUserID: this.$cookies.get('DedeUserID') || 0,
-        SESSDATA: this.$cookies.get('SESSDATA') || 0,
-        bili_jct: this.$cookies.get('bili_jct') || 0
+        DedeUserID: localStorage.getItem('DedeUserID') || 0,
+        SESSDATA: localStorage.getItem('SESSDATA') || 0,
+        bili_jct: localStorage.getItem('bili_jct') || 0
       },
       bili: {
         mid: -1,
@@ -91,10 +88,21 @@ export default {
         name: "",
         top_photo: "",
         fans_medal: { medal: "" }
-      }
+      },
+      configs: []
     }
   },
   computed: {
+    baseConfig() {
+      return {
+        name: "晚安姬",
+        owner: this.bili.name,
+        limited_density: 10,
+        send_rate: 1,
+        listening_words: "晚安\n拜拜\n再见",
+        send_words: "晚安1\n晚安2\n晚安3\n晚安4\n晚安5\n晚安6\n晚安7"
+      }
+    },
     banner() {
       function Banner(link, url) {
         this.link = link;
@@ -131,6 +139,11 @@ export default {
       var tempNode = document.createElement('div');
       tempNode.innerHTML = event.target.value;
       document.getElementById('insertArea').appendChild(tempNode)
+    },
+    addConfig() {
+      if (this.bili.mid == -1) return;
+      this.configs[this.configs.length] = this.baseConfig;
+      this.cids[this.cids.length] = this.configs.length - 1;
     },
     longQuery(code = -1) {
       if (code != -1) return;
@@ -173,9 +186,9 @@ export default {
         .then(response => {
           if (response.data.DedeUserID != -1) {
             this.cookies = response.data;
-            this.$cookies.set('DedeUserID', this.cookies.DedeUserID);
-            this.$cookies.set('SESSDATA', this.cookies.SESSDATA);
-            this.$cookies.set('bili_jct', this.cookies.bili_jct);
+            localStorage.setItem('DedeUserID', this.cookies.DedeUserID);
+            localStorage.setItem('SESSDATA', this.cookies.SESSDATA);
+            localStorage.setItem('bili_jct', this.cookies.bili_jct);
             clearInterval(this.plan);
             this.oauthKey = null;
             this.getInfo();

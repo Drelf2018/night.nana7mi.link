@@ -1,4 +1,6 @@
-- limited_density: 0.0
+- name: 晚安姬
+  owner: 188888131
+  limited_density: 0.0
   listening_words:
   - 晚安
   - 拜拜

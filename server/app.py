@@ -40,6 +40,8 @@ def update(config: MC):
 def save(config: MC):
     try:
         configs.append({
+            "name": config.name,
+            "owner": config.DedeUserID,
             "listening_words": config.listening_words,
             "send_words": config.send_words,
             "limited_density": config.limited_density,

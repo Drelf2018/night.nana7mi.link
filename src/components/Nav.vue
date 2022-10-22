@@ -7,13 +7,13 @@
           <ion-icon name="logo-apple" class="github"></ion-icon>
           <p style="padding-top: 0.25em;">Dynamic Island</p>
         </div>
-        <IconBtn
+        <IconTag
           href="https://github.com/Drelf2018/nana7mi.link/blob/main/src/components/Nav.vue"
           src="https://upload.wikimedia.org/wikipedia/commons/6/62/CSS3_logo.svg"
           title="CSS"
           subtitle="Powered"
           style="padding-right: 1em">
-        </IconBtn>
+        </IconTag>
       </div>
       <div id="content" :class="islandStatus ? 'inner-open' : 'inner-close'">
         <div class="inner"><slot></slot></div>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import IconBtn from './IconBtn.vue';
+import IconTag from './IconTag.vue';
 export default {
     name: "Nav",
     props: {
@@ -33,7 +33,7 @@ export default {
         move: Function,
         islandStatus: Number
     },
-    components: { IconBtn },
+    components: { IconTag },
     updated() {
       if (this.islandStatus) {
         var inner = document.getElementById('content').lastChild
