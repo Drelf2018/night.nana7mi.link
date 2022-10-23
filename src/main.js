@@ -23,6 +23,18 @@ var app = createApp(App)
 
 app.use(VueCookies)
 
+app.config.globalProperties.getCookies = () => {
+    return {
+        DedeUserID: localStorage.getItem('DedeUserID') || 0,
+        SESSDATA: localStorage.getItem('SESSDATA') || 0,
+        bili_jct: localStorage.getItem('bili_jct') || 0
+    } 
+}
+
+app.config.globalProperties.setCookies = (cookies) => {
+    for (var key in cookies) localStorage.setItem(key, cookies[key]);
+}
+
 app.config.globalProperties.throttle = function(fn, delay=500) {
     var flag = new Date().getTime();
     return function(...args) {

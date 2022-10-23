@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import List, Optional
 
@@ -42,19 +43,25 @@ class NightBot:
 
         self.id = f'{credential.dedeuserid}_{roomid}'  # sched 中 id
 
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("["+self.id+"_"+str(self.density)+"][%(asctime)s]: %(message)s", '%H:%M:%S'))
+        self.logger = logging.Logger(self.id)
+        self.logger.addHandler(handler)
+
     def connect(self, sched: AsyncIOScheduler):
         sched.add_job(self.send_msg, 'interval', id=self.id, seconds=self.send_rate)
         return self
 
     async def send_msg(self):
         """定时检测弹幕密度 若超过阈值则随机发送弹幕"""
+        self.logger.info(self.total_danmuku)
         if self.total_danmuku >= 5*self.density:  # 密度超过 5t/s 则发送晚安
             word = self.send_words[self.send_count % len(self.send_words)]
             try:
                 await self.send_room.send_danmaku(Danmaku(word))
                 self.send_count += 1
-            except:
-                ...
+            except Exception as e:
+                self.logger.error(e)
 
     def parse(self, info: list):
         """检测弹幕并计算密度"""

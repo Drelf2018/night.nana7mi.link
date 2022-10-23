@@ -43,7 +43,7 @@
 
             <div class="content">
                 <h2 style="margin-top: 0.7em; margin-bottom: 0.3em">关于</h2>
-                <input @input="changeUID" style="margin: 1em 0px;" placeholder="你想知道什么？">
+                <input @input="func" style="margin: 1em 0px;" placeholder="你想知道什么？">
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@ export default {
     name: "Sider",
     props: {
         status: Number,
-        changeUID: Function
+        func: Function
     },
     components: { IconTag }
 }

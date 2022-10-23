@@ -1,5 +1,5 @@
 <template>
-    <div :id="'outside' + cid" class="outside">
+    <div :id="'outside' + cid" class="show-block outside">
         <div id="config-title" class="inputarea" style="display:flex;align-items: center;">
             <div class="inputInside" style="margin-top: 0 !important;align-items: center;" @click="status ^= 1">
                 <ion-icon id="play" name="play-sharp" :style="status ? 'transform: rotate(90deg);' : ''"></ion-icon>
@@ -25,7 +25,8 @@
                         name="checkmark-circle"
                         bgColor="rgb(52,120,246)"
                         iconColor="white"
-                        textColor="white">
+                        textColor="white"
+                        shadow="none">
                     启动</IconBtn>
                 </div>
             </div>
@@ -70,9 +71,8 @@ import IconBtn from './IconBtn.vue';
 export default {
     name: "ConfigArea",
     props: {
-        config: Object,
-        cookies: Object,
-        cid: Number
+        cid: Number,
+        config: Object
     },
     data() {
         return {
@@ -80,7 +80,8 @@ export default {
             roomid: null,
             running: -1,
             height0: 0,
-            height1: 0
+            height1: 0,
+            cookies: this.getCookies()
         };
     },
     methods: {

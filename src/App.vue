@@ -9,7 +9,7 @@
     <h4 style="margin: 0.5em auto;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
   </Nav>
   <div class="view">
-    <Sider id="sider" :status="siderStatus" :changeUID="changeUID"></Sider>
+    <Sider id="sider" :status="siderStatus" :func="changeConfig"></Sider>
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
       <iframe id="music163" frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
@@ -17,9 +17,9 @@
       <div id="insertArea"></div>
       <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
     </div>
-    <div id="main" :style="'left: ' + (siderStatus-1) * 10 + '%;'">
+    <div id="main" :style="('left: ' + (siderStatus-1) * 10 + '%;') + (bili.mid > 0 ? 'opacity: 1;' : 'opacity: 0;')">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
-        <div :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']" style="padding: 0px">
+        <div class="show-block" style="padding: 0px">
           <img :src="bili.top_photo.replace('http://', 'https://')" class="topPhoto">
           <div class="linear"></div>
           <div v-if="bili.face" style="width: 100px;position: relative;top:-2.5em;z-index: 3;margin: 0.5em">
@@ -38,7 +38,7 @@
             </strong>
           </div>
         </div>
-        <ConfigArea v-if="configs.length" v-for="cid in cids" :cid="cid" :config="configs[cid]" :cookies="cookies" :class="[bili.mid > 0 ? 'open' : 'close', 'show-block']"></ConfigArea>
+        <ConfigArea v-for="(config, cid) in showConfigs" :cid="cid" :config="config"></ConfigArea>
         <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
@@ -62,7 +62,7 @@ export default {
     Swiper,
     ConfigArea,
     IconBtn
-},
+  },
   mounted() {
     this.getInfo();
     this.getConfigs();
@@ -72,14 +72,12 @@ export default {
       oauthKey: null,
       siderStatus: 0,
       location: returnIpData.data.location,
-      changeUID: this.debounce(this.getInfo),
+      changeConfig: this.debounce(event => {
+        this.cids[this.cids.length] = event.target.value
+        localStorage.setItem("configs", this.cids.filter(pp => pp != "").join(","))
+      }),
       move: this.throttle(() => this.siderStatus ^= 1),
       cids: (localStorage.getItem('configs') || "").split(","),
-      cookies: {
-        DedeUserID: localStorage.getItem('DedeUserID') || 0,
-        SESSDATA: localStorage.getItem('SESSDATA') || 0,
-        bili_jct: localStorage.getItem('bili_jct') || 0
-      },
       bili: {
         mid: -1,
         face: "",
@@ -102,6 +100,10 @@ export default {
         listening_words: "晚安\n拜拜\n再见",
         send_words: "晚安1\n晚安2\n晚安3\n晚安4\n晚安5\n晚安6\n晚安7"
       }
+    },
+    showConfigs() {
+      console.log(this.cids);
+      return this.configs.filter((val, idx, arr) => this.cids.indexOf(idx.toString()) != -1);
     },
     banner() {
       function Banner(link, url) {
@@ -141,9 +143,8 @@ export default {
       document.getElementById('insertArea').appendChild(tempNode)
     },
     addConfig() {
-      if (this.bili.mid == -1) return;
       this.configs[this.configs.length] = this.baseConfig;
-      this.cids[this.cids.length] = this.configs.length - 1;
+      this.cids[this.cids.length] = (this.configs.length - 1).toString();
     },
     longQuery(code = -1) {
       if (code != -1) return;
@@ -154,22 +155,13 @@ export default {
     getConfigs() {
       axios
         .get('https://gh.nana7mi.link/query?cid=-1')
-        .then(response => {
-          if (response.data.code == 1) {
-            this.configs = response.data.data;
-            for (var i = 0; i < this.configs.length; i++) {
-              this.configs[i].listening_words = this.configs[i].listening_words.join('\n')
-              this.configs[i].send_words = this.configs[i].send_words.join('\n')
-            }
-          }
-        })
+        .then(response => { if (response.data.code == 1) this.configs = response.data.data })
         .catch(error => console.log(error));
     },
-    getInfo(event = null) {
-      if (!this.cookies.DedeUserID) this.longQuery();
-      if (event) this.cookies.DedeUserID = event.target.value;
+    getInfo() {
+      if (!this.getCookies().DedeUserID) this.longQuery();
       axios
-        .get('https://aliyun.nana7mi.link/info', { params: this.cookies })
+        .get('https://aliyun.nana7mi.link/info', { params: this.getCookies() })
         .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid })
         .then(this.longQuery)
         .catch(error => console.log(error));
@@ -185,11 +177,8 @@ export default {
         .get('https://aliyun.nana7mi.link/getLoginInfo', { params: { oauthKey: this.oauthKey } })
         .then(response => {
           if (response.data.DedeUserID != -1) {
-            this.cookies = response.data;
-            localStorage.setItem('DedeUserID', this.cookies.DedeUserID);
-            localStorage.setItem('SESSDATA', this.cookies.SESSDATA);
-            localStorage.setItem('bili_jct', this.cookies.bili_jct);
             clearInterval(this.plan);
+            this.setCookies(response.data);
             this.oauthKey = null;
             this.getInfo();
           }
@@ -279,16 +268,6 @@ export default {
   padding: 0.5em;
   border-radius: 0.5em;
   border: 1px solid rgb(222, 222, 222);
-}
-
-.close {
-  /* left: 100%; */
-  opacity: 0;
-}
-
-.open {
-  /* left: 0%; */
-  opacity: 1;
 }
 
 input,
