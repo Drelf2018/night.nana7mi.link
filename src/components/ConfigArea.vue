@@ -95,8 +95,8 @@ export default {
                     SESSDATA: this.cookies.SESSDATA,
                     bili_jct: this.cookies.bili_jct,
                     DedeUserID: this.cookies.DedeUserID,
-                    listening_words: this.config.listening_words.split("\n"),
-                    send_words: this.config.send_words.split("\n"),
+                    listening_words: this.config.listening_words,
+                    send_words: this.config.send_words,
                     limited_density: this.config.limited_density,
                     send_rate: this.config.send_rate
                 })

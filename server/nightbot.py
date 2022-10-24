@@ -34,12 +34,12 @@ class NightBot:
         self.config = config  # 保存配置
         self.density = config.limited_density  # 监听密度
 
-        words = ['(' + cnm怎么正则也要转义啊(word) + ')' for word in config.listening_words]
+        words = ['(' + cnm怎么正则也要转义啊(word) + ')' for word in config.listening_words.split("\n")]
         self.regex = re.compile('|'.join(words))  # 正则监听词
 
         self.send_count = 0  # 发送计数器
         self.send_rate = config.send_rate  # 发送速率
-        self.send_words = config.send_words  # 发送弹幕库
+        self.send_words = config.send_words.split("\n")  # 发送弹幕库
         self.send_room = LiveRoom(int(roomid), credential)  # 发送弹幕的直播间
 
         self.id = f'{credential.dedeuserid}_{roomid}'  # sched 中 id
