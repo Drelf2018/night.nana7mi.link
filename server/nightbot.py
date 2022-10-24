@@ -13,8 +13,8 @@ class Config(BaseModel):
     SESSDATA: Optional[str]
     bili_jct: Optional[str]
     DedeUserID: Optional[str]
-    listening_words: List[str]
-    send_words: List[str]
+    listening_words: str
+    send_words: str
     limited_density: float
     send_rate: float
 
@@ -31,6 +31,7 @@ class NightBot:
         self.count_danmuku = 0  # 储存某时间点晚安弹幕
         self.total_danmuku = 0  # 统计一段时间总晚安弹幕
         self.last_time = 0  # 上一次储存弹幕时的时间戳
+        self.config = config  # 保存配置
         self.density = config.limited_density  # 监听密度
 
         words = ['(' + cnm怎么正则也要转义啊(word) + ')' for word in config.listening_words]

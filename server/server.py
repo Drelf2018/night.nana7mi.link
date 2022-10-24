@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 import yaml
 from bilibili_api.live import Credential
@@ -8,7 +9,7 @@ from uvicorn import Config, Server
 
 from monitor import Config as MC, Monitor
 
-app = FastAPI(title='night.nana7mi.link', description='后端接口', version="0.1.0 嗯？我还以为 1.0.1 呢")
+app = FastAPI(title='night.nana7mi.link', description='后端接口')
 monitor = Monitor("http://localhost:8080", "nightbot")
 configs: list = yaml.load(open("configs.yml", 'r', encoding='utf-8'), Loader=yaml.Loader)
 loop = asyncio.new_event_loop()
@@ -23,11 +24,13 @@ app.add_middleware(
 )
 
 @app.get('/query', summary='查询配置文件', description='通过配置文件序列号获取，如果超出限制会返回 {"code": 0}')
-def query(cid: int):
+def query(cid: int, uid: Optional[str]):
+    configs: list = yaml.load(open("configs.yml", 'r', encoding='utf-8'), Loader=yaml.Loader)
+    bots = monitor.getByUid(uid)
     if cid < 0:
-        return {"code": 1, "data": configs}
+        return {"code": 1, "data": configs, "bots": bots}
     elif len(configs) > cid:
-        return {"code": 1, "data": configs[cid]}
+        return {"code": 1, "data": configs[cid], "bots": bots}
     else:
         return {"code": 0}
 

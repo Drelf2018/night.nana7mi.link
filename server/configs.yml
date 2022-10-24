@@ -1,16 +1,6 @@
 - name: 晚安姬
-  owner: 188888131
-  limited_density: 0.0
-  listening_words:
-  - 晚安
-  - 拜拜
-  - 再见
-  send_rate: 1.0
-  send_words:
-  - 晚安1
-  - 晚安2
-  - 晚安3
-  - 晚安4
-  - 晚安5
-  - 晚安6
-  - 晚安7
+  owner: 脆鲨12138
+  limited_density: 10.0
+  listening_words: "晚安\n拜拜\n再见"
+  send_rate: 1.05
+  send_words: "晚安\n拜拜\n再见\n别走\n爱您"

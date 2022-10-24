@@ -55,11 +55,11 @@
             <div v-if="status" class="inputarea">
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">上传配置</span>
-                    <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)">将此配置上传并署您用户名</IconBtn>
+                    <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)" @click="uploadConfigs()">将此配置上传并署您用户名</IconBtn>
                 </div>
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">删除配置</span>
-                    <IconBtn name="trash-outline" iconColor="rgb(232,64,38)">将此配置从您的账户中删除</IconBtn>
+                    <IconBtn name="trash-outline" iconColor="rgb(232,64,38)" @click="deleteConfig(this.cid)">将此配置从您的账户中删除</IconBtn>
                 </div>
             </div>
         </div>
@@ -71,11 +71,13 @@ import IconBtn from './IconBtn.vue';
 export default {
     name: "ConfigArea",
     props: {
-        cid: Number,
-        config: Object
+        config: Object,
+        appendConfig: Function,
+        deleteConfig: Function
     },
     data() {
         return {
+            cid: this.config.cid,
             status: 1,
             roomid: null,
             running: -1,
@@ -89,17 +91,30 @@ export default {
             this.running *= -1;
             axios
                 .post("https://gh.nana7mi.link/update", {
-                roomid: String(this.running * this.roomid),
-                SESSDATA: this.cookies.SESSDATA,
-                bili_jct: this.cookies.bili_jct,
-                DedeUserID: this.cookies.DedeUserID,
-                listening_words: this.config.listening_words.split("\n"),
-                send_words: this.config.send_words.split("\n"),
-                limited_density: this.config.limited_density,
-                send_rate: this.config.send_rate
-            })
+                    roomid: String(this.running * this.roomid),
+                    SESSDATA: this.cookies.SESSDATA,
+                    bili_jct: this.cookies.bili_jct,
+                    DedeUserID: this.cookies.DedeUserID,
+                    listening_words: this.config.listening_words.split("\n"),
+                    send_words: this.config.send_words.split("\n"),
+                    limited_density: this.config.limited_density,
+                    send_rate: this.config.send_rate
+                })
                 .catch(error => console.log(error));
-        }
+        },
+        uploadConfigs() {
+            axios
+                .post('https://gh.nana7mi.link/save', {
+                    name: this.config.name,
+                    DedeUserID: this.cookies.DedeUserID,
+                    listening_words: this.config.listening_words,
+                    send_words: this.config.send_words,
+                    limited_density: this.config.limited_density,
+                    send_rate: this.config.send_rate
+                })
+                .then(response => { if (response.data.code == 1) this.appendConfig(response.data.cid.toString()) })
+                .catch(error => console.log(error));
+        },
     },
     mounted() {
         this.height1 = document.getElementById("outside" + this.cid).offsetHeight - 32;

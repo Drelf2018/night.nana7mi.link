@@ -38,8 +38,8 @@
             </strong>
           </div>
         </div>
-        <ConfigArea v-for="(config, cid) in showConfigs" :cid="cid" :config="config"></ConfigArea>
-        <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
+        <ConfigArea v-for="config in showConfigs" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+        <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
   </div>
@@ -93,16 +93,16 @@ export default {
   computed: {
     baseConfig() {
       return {
+        cid: this.configs.length,
         name: "晚安姬",
         owner: this.bili.name,
-        limited_density: 10,
-        send_rate: 1,
+        limited_density: 10.0,
+        send_rate: 1.05,
         listening_words: "晚安\n拜拜\n再见",
-        send_words: "晚安1\n晚安2\n晚安3\n晚安4\n晚安5\n晚安6\n晚安7"
+        send_words: "晚安\n拜拜\n再见\n别走\n爱您"
       }
     },
     showConfigs() {
-      console.log(this.cids);
       return this.configs.filter((val, idx, arr) => this.cids.indexOf(idx.toString()) != -1);
     },
     banner() {
@@ -142,9 +142,17 @@ export default {
       tempNode.innerHTML = event.target.value;
       document.getElementById('insertArea').appendChild(tempNode)
     },
-    addConfig() {
+    addBaseConfig() {
       this.configs[this.configs.length] = this.baseConfig;
       this.cids[this.cids.length] = (this.configs.length - 1).toString();
+    },
+    appendConfig(event) {
+      if (this.cids.indexOf(event) == -1) this.cids[this.cids.length] = event
+      localStorage.setItem("configs", this.cids.filter(pp => pp != "").join(","))
+    },
+    deleteConfig(event) {
+      for (var i=0;i<this.cids.length;i++) if (this.cids[i] == event) this.cids[i] = ""
+      localStorage.setItem("configs", this.cids.filter(pp => pp != "").join(","))
     },
     longQuery(code = -1) {
       if (code != -1) return;
@@ -154,8 +162,11 @@ export default {
     },
     getConfigs() {
       axios
-        .get('https://gh.nana7mi.link/query?cid=-1')
-        .then(response => { if (response.data.code == 1) this.configs = response.data.data })
+        .get('https://gh.nana7mi.link/query?cid=-1&uid='+this.getCookies().DedeUserID)
+        .then(response => { if (response.data.code == 1) {
+          this.configs = response.data.data;
+          for (var i=0;i<this.configs.length;i++) this.configs[i].cid = i;
+        }})
         .catch(error => console.log(error));
     },
     getInfo() {
