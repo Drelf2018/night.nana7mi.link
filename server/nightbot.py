@@ -9,6 +9,7 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     name: Optional[str]
+    owner: Optional[str]
     roomid: Optional[str]
     SESSDATA: Optional[str]
     bili_jct: Optional[str]

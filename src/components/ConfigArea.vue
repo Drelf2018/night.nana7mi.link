@@ -4,14 +4,14 @@
             <div class="inputInside" style="margin-top: 0 !important;align-items: center;" @click="status ^= 1">
                 <ion-icon id="play" name="play-sharp" :style="status ? 'transform: rotate(90deg);' : ''"></ion-icon>
                 <span style="width:100%;margin-right: 0.5em;">
-                    {{ config.name }}
-                    <span style="color: grey;font-size: 0.8em">所有者：{{ config.owner }}</span>
+                    {{ this.config.name }}
+                    <span style="color: grey;font-size: 0.8em">所有者：{{ this.config.owner }}</span>
                 </span>
             </div>
             <div id="config-subtitle">
                 <span style="width:20%;margin-right: 0.5em;">直播间号</span>
                 <div style="width:80%;display: flex;justify-content: space-between">
-                    <input v-model="roomid" style="width:calc(100% - 90px);margin: 0 0.5em 0 0;" placeholder="不是UID！！！">
+                    <input v-model="roomid" style="width:calc(100% - 90px);margin: 0 0.5em 0 0;" placeholder="不是UID！！！" :disabled="running == 1">
                     <div v-if="running == 1" @click="update()"
                         style="border-radius: 0.5em;height: 38px;width:78px;border: 1px solid #ced4da;display: flex;align-items: center;">
                         <ion-icon name="stop"
@@ -52,7 +52,7 @@
                     <textarea v-model="config.send_words" style="width:80%;"></textarea>
                 </div>
             </div>
-            <div v-if="status" class="inputarea">
+            <div v-if="status && cid" class="inputarea">
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">上传配置</span>
                     <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)" @click="uploadConfigs()">将此配置上传并署您用户名</IconBtn>
@@ -79,8 +79,8 @@ export default {
         return {
             cid: this.config.cid,
             status: 1,
-            roomid: null,
-            running: -1,
+            roomid: this.config.roomid,
+            running: this.config.running || -1,
             height0: 0,
             height1: 0,
             cookies: this.getCookies()
@@ -92,6 +92,8 @@ export default {
             axios
                 .post("https://gh.nana7mi.link/update", {
                     roomid: String(this.running * this.roomid),
+                    name: this.config.name,
+                    owner: this.config.owner,
                     SESSDATA: this.cookies.SESSDATA,
                     bili_jct: this.cookies.bili_jct,
                     DedeUserID: this.cookies.DedeUserID,

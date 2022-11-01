@@ -38,6 +38,7 @@
             </strong>
           </div>
         </div>
+        <ConfigArea v-for="config in bots" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
         <ConfigArea v-for="config in showConfigs" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
         <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
@@ -87,12 +88,14 @@ export default {
         top_photo: "",
         fans_medal: { medal: "" }
       },
+      bots: [],
       configs: []
     }
   },
   computed: {
     baseConfig() {
       return {
+        running: -1,
         cid: this.configs.length,
         name: "晚安姬",
         owner: this.bili.name,
@@ -164,7 +167,9 @@ export default {
       axios
         .get('https://gh.nana7mi.link/query?cid=-1&uid='+this.getCookies().DedeUserID)
         .then(response => { if (response.data.code == 1) {
+          this.bots = response.data.bots;
           this.configs = response.data.data;
+          for (var i=0;i<this.bots.length;i++) this.bots[i].running = 1;
           for (var i=0;i<this.configs.length;i++) this.configs[i].cid = i;
         }})
         .catch(error => console.log(error));
