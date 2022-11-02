@@ -175,10 +175,11 @@ export default {
         .catch(error => console.log(error));
     },
     getInfo() {
-      if (!this.getCookies().DedeUserID) this.longQuery();
+      var cookies = this.getCookies()
+      if (!cookies.DedeUserID) this.longQuery();
       axios
-        .get('https://aliyun.nana7mi.link/info', { params: this.getCookies() })
-        .then(response => { if (response.data.mid != -1) this.bili = response.data; return response.data.mid })
+        .get('https://aliyun.nana7mi.link/user.User(uid='+ cookies.DedeUserID +').get_user_info', { params: cookies })
+        .then(response => { if (response.data.code != 1) this.bili = response.data.data; return response.data.data.mid })
         .then(this.longQuery)
         .catch(error => console.log(error));
     },
