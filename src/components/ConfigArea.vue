@@ -5,7 +5,7 @@
                 <ion-icon id="play" name="play-sharp" :style="status ? 'transform: rotate(90deg);' : ''"></ion-icon>
                 <span style="width:100%;margin-right: 0.5em;">
                     {{ this.config.name }}
-                    <span style="color: grey;font-size: 0.8em">所有者：{{ this.config.owner }}</span>
+                    <span style="color: grey;font-size: 0.8em">所有者：{{ name }}</span>
                 </span>
             </div>
             <div id="config-subtitle">
@@ -71,6 +71,7 @@ import IconBtn from './IconBtn.vue';
 export default {
     name: "ConfigArea",
     props: {
+        name: String,
         config: Object,
         appendConfig: Function,
         deleteConfig: Function

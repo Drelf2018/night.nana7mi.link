@@ -12,8 +12,8 @@
     <Sider id="sider" :status="siderStatus" :func="changeConfig"></Sider>
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
-      <iframe id="music163" frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
-        src="//music.163.com/outchain/player?type=0&id=7690347404&auto=1&height=90"></iframe>
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
+        src="//music.163.com/outchain/player?type=2&id=1985010157&auto=1&height=90"></iframe>
       <div id="insertArea"></div>
       <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
     </div>
@@ -38,8 +38,8 @@
             </strong>
           </div>
         </div>
-        <ConfigArea v-for="config in bots" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
-        <ConfigArea v-for="config in showConfigs" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+        <ConfigArea v-for="config in bots" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+        <ConfigArea v-for="config in showConfigs" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
         <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
@@ -89,7 +89,8 @@ export default {
         fans_medal: { medal: "" }
       },
       bots: [],
-      configs: []
+      configs: [],
+      uid2name: {}
     }
   },
   computed: {
@@ -98,7 +99,7 @@ export default {
         running: -1,
         cid: this.configs.length,
         name: "晚安姬",
-        owner: this.bili.name,
+        owner: this.bili.mid.toString(),
         limited_density: 10.0,
         send_rate: 1.05,
         listening_words: "晚安\n拜拜\n再见",
@@ -147,6 +148,7 @@ export default {
     },
     addBaseConfig() {
       this.configs[this.configs.length] = this.baseConfig;
+      console.log(this.configs[-1]);
       this.cids[this.cids.length] = (this.configs.length - 1).toString();
     },
     appendConfig(event) {
@@ -169,8 +171,30 @@ export default {
         .then(response => { if (response.data.code == 1) {
           this.bots = response.data.bots;
           this.configs = response.data.data;
-          for (var i=0;i<this.bots.length;i++) this.bots[i].running = 1;
-          for (var i=0;i<this.configs.length;i++) this.configs[i].cid = i;
+          for (var i=0;i<this.bots.length;i++) {
+            this.bots[i].running = 1;
+            var uid = this.bots[i].owner
+            if (!this.uid2name[uid]) {
+              this.uid2name[uid] = "await"
+              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info')
+              .then(response => { 
+                if (response.data.code == 0) 
+                  this.uid2name[response.data.data.mid.toString()] = response.data.data.name
+              })
+            }
+          }
+          for (var i=0;i<this.configs.length;i++) {
+            this.configs[i].cid = i;
+            var uid = this.configs[i].owner
+            if (!this.uid2name[uid]) {
+              this.uid2name[uid] = "await"
+              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info')
+              .then(response => { 
+                if (response.data.code == 0) 
+                  this.uid2name[response.data.data.mid.toString()] = response.data.data.name
+              })
+            }
+          }
         }})
         .catch(error => console.log(error));
     },
