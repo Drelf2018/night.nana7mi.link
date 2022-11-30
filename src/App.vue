@@ -176,7 +176,7 @@ export default {
             var uid = this.bots[i].owner
             if (!this.uid2name[uid]) {
               this.uid2name[uid] = "await"
-              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info')
+              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info()?max_age=86400')
               .then(response => { 
                 if (response.data.code == 0) 
                   this.uid2name[response.data.data.mid.toString()] = response.data.data.name
@@ -188,7 +188,7 @@ export default {
             var uid = this.configs[i].owner
             if (!this.uid2name[uid]) {
               this.uid2name[uid] = "await"
-              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info')
+              axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info()?max_age=86400')
               .then(response => { 
                 if (response.data.code == 0) 
                   this.uid2name[response.data.data.mid.toString()] = response.data.data.name
@@ -202,7 +202,7 @@ export default {
       var cookies = this.getCookies()
       if (!cookies.DedeUserID) this.longQuery();
       axios
-        .get('https://aliyun.nana7mi.link/user.User(uid='+ cookies.DedeUserID +').get_user_info', { params: cookies })
+        .get('https://aliyun.nana7mi.link/user.User(uid='+ cookies.DedeUserID +').get_user_info()?max_age=86400', { params: cookies })
         .then(response => { if (response.data.code != 1) this.bili = response.data.data; return response.data.data.mid })
         .then(this.longQuery)
         .catch(error => console.log(error));

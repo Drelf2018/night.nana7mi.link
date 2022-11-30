@@ -1,6 +1,6 @@
 html {
-  filter: grayscale(95%);
   -webkit-filter: grayscale(95%);
+  filter: grayscale(95%);
 }
 
 body {
