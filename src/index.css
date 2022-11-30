@@ -1,3 +1,8 @@
+html {
+  filter: grayscale(95%);
+  -webkit-filter: grayscale(95%);
+}
+
 body {
   margin: 0px;
   background-color: rgb(246,248,250);
