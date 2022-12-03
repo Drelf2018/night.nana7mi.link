@@ -120,7 +120,11 @@ export default {
         },
     },
     mounted() {
-        console.log(this.$route);
+        if(this.$route.params.roomid) {
+            document.getElementById("outside" + this.cid).classList.add("iframe");
+            document.body.style.backgroundColor = "transparent"
+            document.body.parentElement.style.filter = "none"
+        }
         this.height1 = document.getElementById("outside" + this.cid).offsetHeight - 32;
         this.status = 0;
     },
@@ -138,6 +142,10 @@ export default {
 </script>
 
 <style>
+.iframe {
+    margin: 3px;
+}
+
 .outside {
     display: flex;
     flex-direction: column;
