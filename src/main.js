@@ -17,10 +17,35 @@ Date.prototype.Format = function (fmt) {
 import { createApp } from 'vue'
 import VueCookies from "vue-cookies";
 import App from './App.vue'
+import Main from './components/Main.vue'
+import ConfigArea from './components/ConfigArea.vue';
 import './index.css'
+import { createRouter, createWebHistory } from 'vue-router'
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        { path: '/', component: Main },
+        { path: '/:roomid', component: ConfigArea,
+            props: {
+                name: "你",
+                config: {
+                    running: -1,
+                    cid: 0,
+                    name: "晚安姬",
+                    limited_density: 10.0,
+                    send_rate: 1.05,
+                    listening_words: "晚安\n拜拜\n再见",
+                    send_words: "晚安\n拜拜\n再见\n别走\n爱您"
+                }
+            }
+        },
+    ]
+})
 
 var app = createApp(App)
 
+app.use(router)
 app.use(VueCookies)
 
 app.config.globalProperties.getCookies = () => {
@@ -28,16 +53,16 @@ app.config.globalProperties.getCookies = () => {
         DedeUserID: localStorage.getItem('DedeUserID') || 0,
         SESSDATA: localStorage.getItem('SESSDATA') || 0,
         bili_jct: localStorage.getItem('bili_jct') || 0
-    } 
+    }
 }
 
 app.config.globalProperties.setCookies = (cookies) => {
     for (var key in cookies) localStorage.setItem(key, cookies[key]);
 }
 
-app.config.globalProperties.throttle = function(fn, delay=500) {
+app.config.globalProperties.throttle = function (fn, delay = 500) {
     var flag = new Date().getTime();
-    return function(...args) {
+    return function (...args) {
         var tt = new Date().getTime();
         if (tt - flag >= delay) {
             fn.call(this, ...args);
@@ -46,11 +71,11 @@ app.config.globalProperties.throttle = function(fn, delay=500) {
     }
 }
 
-app.config.globalProperties.debounce = function(fn, delay=500) {
+app.config.globalProperties.debounce = function (fn, delay = 500) {
     var timer = null;
-    return function(...args) {
+    return function (...args) {
         if (timer) clearTimeout(timer);
-        timer = setTimeout(()=>fn.call(this, ...args), delay);
+        timer = setTimeout(() => fn.call(this, ...args), delay);
     }
 }
 

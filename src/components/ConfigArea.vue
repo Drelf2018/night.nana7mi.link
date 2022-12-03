@@ -80,7 +80,7 @@ export default {
         return {
             cid: this.config.cid,
             status: 1,
-            roomid: this.config.roomid,
+            roomid: this.config.roomid || this.$route.params.roomid,
             running: this.config.running || -1,
             height0: 0,
             height1: 0,
@@ -120,6 +120,7 @@ export default {
         },
     },
     mounted() {
+        console.log(this.$route);
         this.height1 = document.getElementById("outside" + this.cid).offsetHeight - 32;
         this.status = 0;
     },
