@@ -1,6 +1,5 @@
 <template>
-  <a id="top"></a>
-  <Nav href='https://t.bilibili.com/682043379459031137'
+  <Nav v-if="!$route.params.roomid" href='https://t.bilibili.com/682043379459031137'
     src="https://i0.hdslb.com/bfs/new_dyn/0de10012b4a96d7d4bcd82728f77b2051464240042.png" :move="move"
     :islandStatus="oauthKey != null">
     <h3 style="margin: 0.5em auto;">扫描二维码登录</h3>
@@ -8,7 +7,7 @@
       :src="'https://api.qrserver.com/v1/create-qr-code?data=https://passport.bilibili.com/qrcode/h5/login?oauthKey=' + oauthKey">
     <h4 style="margin: 0.5em auto;">请使用<span style="color: rgb(21,169,217)">哔哩哔哩客户端</span></h4>
   </Nav>
-  <div class="view">
+  <div v-if="!$route.params.roomid" class="view">
     <Sider id="sider" :status="siderStatus" :func="changeConfig"></Sider>
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
@@ -44,6 +43,8 @@
       </div>
     </div>
   </div>
+  <ConfigArea v-if="$route.params.roomid" v-for="config in bots" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+  <ConfigArea v-if="$route.params.roomid" v-for="config in showConfigs" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
 </template>
 
 <script>

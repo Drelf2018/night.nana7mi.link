@@ -52,7 +52,7 @@
                     <textarea v-model="config.send_words" style="width:80%;"></textarea>
                 </div>
             </div>
-            <div v-if="status && cid" class="inputarea">
+            <div v-if="status && cid && !$route.params.roomid" class="inputarea">
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">上传配置</span>
                     <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)" @click="uploadConfigs()">将此配置上传并署您用户名</IconBtn>
@@ -127,7 +127,6 @@ export default {
         setTimeout(() => {
             this.height[this.status] = this.outside.offsetHeight - 32;
             this.outside.style = "height: " + this.height[this.status] + "px;";
-            console.log(this.height);
             if(this.$route.params.roomid) {
                 this.outside.classList.add("iframe");
                 document.body.style.backgroundColor = "transparent"

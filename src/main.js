@@ -26,20 +26,21 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: Main },
-        { path: '/:roomid', component: ConfigArea,
-            props: {
-                name: "你",
-                config: {
-                    running: -1,
-                    cid: 0,
-                    name: "晚安姬",
-                    limited_density: 10.0,
-                    send_rate: 1.05,
-                    listening_words: "晚安\n拜拜\n再见",
-                    send_words: "晚安\n拜拜\n再见\n别走\n爱您"
-                }
-            }
-        },
+        { path: '/:roomid', component: Main }
+        // { path: '/:roomid', component: ConfigArea,
+        //     props: {
+        //         name: "你",
+        //         config: {
+        //             running: -1,
+        //             cid: 0,
+        //             name: "晚安姬",
+        //             limited_density: 10.0,
+        //             send_rate: 1.05,
+        //             listening_words: "晚安\n拜拜\n再见",
+        //             send_words: "晚安\n拜拜\n再见\n别走\n爱您"
+        //         }
+        //     }
+        // },
     ]
 })
 
