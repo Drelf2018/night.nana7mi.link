@@ -76,15 +76,16 @@ export default {
         appendConfig: Function,
         deleteConfig: Function
     },
+    components: { IconBtn },
     data() {
         return {
             cid: this.config.cid,
             status: 1,
             roomid: this.config.roomid || this.$route.params.roomid,
             running: this.config.running || -1,
-            height0: 0,
-            height1: 0,
-            cookies: this.getCookies()
+            height: [0, 0],
+            cookies: this.getCookies(),
+            outside: null
         };
     },
     methods: {
@@ -120,24 +121,22 @@ export default {
         },
     },
     mounted() {
-        if(this.$route.params.roomid) {
-            document.getElementById("outside" + this.cid).classList.add("iframe");
-            document.body.style.backgroundColor = "transparent"
-            document.body.parentElement.style.filter = "none"
-        }
-        this.height1 = document.getElementById("outside" + this.cid).offsetHeight - 32;
-        this.status = 0;
+        this.outside = document.getElementById("outside" + this.cid);
+        this.height[this.status] = this.outside.offsetHeight - 32;
+        this.status ^= 1;
+        setTimeout(() => {
+            this.height[this.status] = this.outside.offsetHeight - 32;
+            this.outside.style = "height: " + this.height[this.status] + "px;";
+            console.log(this.height);
+            if(this.$route.params.roomid) {
+                this.outside.classList.add("iframe");
+                document.body.style.backgroundColor = "transparent"
+                document.body.parentElement.style.filter = "none"
+                this.status = 1
+            }
+        }, 1)
     },
-    updated() {
-        var outside = document.getElementById("outside" + this.cid);
-        if (!this.height0)
-            this.height0 = outside.offsetHeight - 32;
-        if (this.status)
-            outside.style = "height: " + this.height1 + "px;";
-        else
-            outside.style = "height: " + this.height0 + "px;";
-    },
-    components: { IconBtn }
+    watch: { "status": function (val) { if(this.height[val])this.outside.style = "height: " + this.height[val] + "px;"; } },
 }
 </script>
 
