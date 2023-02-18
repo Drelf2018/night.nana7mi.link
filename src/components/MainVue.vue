@@ -18,7 +18,7 @@
     </div>
     <div id="main" :style="('left: ' + (siderStatus-1) * 10 + '%;') + (bili.mid > 0 ? 'opacity: 1;' : 'opacity: 0;')">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
-        <div v-if="bili.uid" class="show-block" style="padding: 0px">
+        <div v-if="bili.mid" class="show-block" style="padding: 0px">
           <img :src="bili.top_photo.replace('http://', 'https://')" class="topPhoto">
           <div class="linear"></div>
           <div v-if="bili.face" style="width: 100px;position: relative;top:-2.5em;z-index: 3;margin: 0.5em">
