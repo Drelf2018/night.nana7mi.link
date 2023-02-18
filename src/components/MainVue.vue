@@ -12,13 +12,13 @@
     <div id="subsider" :style="'right: ' + (1-siderStatus) * 10 + '%'">
       <Swiper speed=5000 width="90%" :banner="banner"></Swiper>
       <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=96% height=110
-        src="//music.163.com/outchain/player?type=2&id=1985010157&auto=1&height=90"></iframe>
+        src="//music.163.com/outchain/player?type=2&id=1985010157&height=90"></iframe>
       <div id="insertArea"></div>
-      <input @keyup.enter.native="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
+      <input @keyup.enter="addHtml" style="width: 90%;margin: 0.5em 0px;" placeholder="插入 html 代码">
     </div>
     <div id="main" :style="('left: ' + (siderStatus-1) * 10 + '%;') + (bili.mid > 0 ? 'opacity: 1;' : 'opacity: 0;')">
       <div style="display: flex;margin-top: 1em;justify-content: space-between;flex-direction: column;">
-        <div class="show-block" style="padding: 0px">
+        <div v-if="bili.uid" class="show-block" style="padding: 0px">
           <img :src="bili.top_photo.replace('http://', 'https://')" class="topPhoto">
           <div class="linear"></div>
           <div v-if="bili.face" style="width: 100px;position: relative;top:-2.5em;z-index: 3;margin: 0.5em">
@@ -33,30 +33,34 @@
                 {{ bili.name }}
                 <Medal v-if="bili.fans_medal.medal" :medal="bili.fans_medal.medal"></Medal>
               </p>
-              <span style="color: grey; font-size: 100%" id="subtitle">{{ location }}</span>
+              <span style="color: grey; font-size: 100%" id="subtitle">{{ bili.sign }}</span>
             </strong>
           </div>
         </div>
-        <ConfigArea v-for="config in bots" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
-        <ConfigArea v-for="config in showConfigs" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+        <ConfigArea :key="config" v-for="config in bots" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+        <ConfigArea :key="config" v-for="config in showConfigs" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
         <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
   </div>
-  <ConfigArea v-if="$route.params.roomid" v-for="config in bots" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
-  <ConfigArea v-if="$route.params.roomid" v-for="config in showConfigs" :name="uid2name[config.owner]" :config="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+  <div v-if="$route.params.roomid">
+    <ConfigArea :key="config" v-for="config in bots" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+    <ConfigArea :key="config" v-for="config in showConfigs" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
+  </div>
 </template>
 
 <script>
-import Nav from './Nav.vue';
-import Sider from './Sider.vue';
-import Medal from './Medal.vue';
-import Swiper from './Swiper.vue';
+import Nav from './NavVue.vue';
+import Sider from './SiderVue.vue';
+import Medal from './MedalVue.vue';
+import Swiper from './SwiperVue.vue';
 import ConfigArea from './ConfigArea.vue';
 import IconBtn from './IconBtn.vue';
 
+import axios from 'axios'
+
 export default {
-  name: 'App',
+  name: 'MainVue',
   components: {
     Nav,
     Sider,
@@ -73,7 +77,6 @@ export default {
     return {
       oauthKey: null,
       siderStatus: 0,
-      location: returnIpData.data.location,
       changeConfig: this.debounce(event => {
         this.cids[this.cids.length] = event.target.value
         localStorage.setItem("configs", this.cids.filter(pp => pp != "").join(","))
@@ -108,13 +111,17 @@ export default {
       }
     },
     showConfigs() {
-      return this.configs.filter((val, idx, arr) => this.cids.indexOf(idx.toString()) != -1);
+      let configs = []
+      for(let cid in this.cids) {
+        if (parseInt(cid) < this.configs.length) configs.push(this.configs[parseInt(cid)])
+      }
+      return configs
     },
     banner() {
       function Banner(link, url) {
         this.link = link;
         this.url = url;
-      };
+      }
       var res = [
         new Banner(
           "https://www.bilibili.com/video/BV1vJ411B7ng",
@@ -149,7 +156,6 @@ export default {
     },
     addBaseConfig() {
       this.configs[this.configs.length] = this.baseConfig;
-      console.log(this.configs[-1]);
       this.cids[this.cids.length] = (this.configs.length - 1).toString();
     },
     appendConfig(event) {
@@ -184,9 +190,9 @@ export default {
               })
             }
           }
-          for (var i=0;i<this.configs.length;i++) {
+          for (let i=0;i<this.configs.length;i++) {
             this.configs[i].cid = i;
-            var uid = this.configs[i].owner
+            let uid = this.configs[i].owner
             if (!this.uid2name[uid]) {
               this.uid2name[uid] = "await"
               axios.get('https://aliyun.nana7mi.link/user.User(uid='+ uid +').get_user_info()?max_age=86400')
@@ -197,7 +203,7 @@ export default {
             }
           }
         }})
-        .catch(error => console.log(error));
+        .catch(console.log)
     },
     getInfo() {
       var cookies = this.getCookies()
@@ -206,13 +212,13 @@ export default {
         .get('https://aliyun.nana7mi.link/user.User(uid='+ cookies.DedeUserID +').get_user_info()?max_age=86400', { params: cookies })
         .then(response => { if (response.data.code != 1) this.bili = response.data.data; return response.data.data.mid })
         .then(this.longQuery)
-        .catch(error => console.log(error));
+        .catch(console.log)
     },
     getLoginUrl() {
       axios
         .get('https://aliyun.nana7mi.link/getLoginUrl')
         .then(response => this.oauthKey = response.data.data.oauthKey)
-        .catch(error => console.log(error));
+        .catch(console.log)
     },
     getLoginInfo() {
       axios
@@ -225,7 +231,7 @@ export default {
             this.getInfo();
           }
         })
-        .catch(error => console.log(error));
+        .catch(console.log)
     }
   }
 }

@@ -16,7 +16,7 @@
 
 <script>
 export default {
-    name: 'Medal',
+    name: 'MedalVue',
     props: {
         medal: Object
     },

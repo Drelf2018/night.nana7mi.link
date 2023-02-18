@@ -53,7 +53,7 @@
 import IconTag from './IconTag.vue';
 
 export default {
-    name: "Sider",
+    name: "SiderVue",
     props: {
         status: Number,
         func: Function

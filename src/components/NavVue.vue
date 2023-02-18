@@ -26,7 +26,7 @@
 <script>
 import IconTag from './IconTag.vue';
 export default {
-    name: "Nav",
+    name: "NavVue",
     props: {
         href: String,
         src: String,

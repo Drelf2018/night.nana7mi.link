@@ -68,21 +68,25 @@
 
 <script>
 import IconBtn from './IconBtn.vue';
+
+import axios from 'axios'
+
 export default {
     name: "ConfigArea",
     props: {
         name: String,
-        config: Object,
+        oconfig: Object,
         appendConfig: Function,
         deleteConfig: Function
     },
     components: { IconBtn },
     data() {
         return {
-            cid: this.config.cid,
+            config: this.oconfig,
+            cid: this.oconfig.cid,
             status: 1,
-            roomid: this.config.roomid || this.$route.params.roomid,
-            running: this.config.running || -1,
+            roomid: this.oconfig.roomid || this.$route.params.roomid,
+            running: this.oconfig.running || -1,
             height: [0, 0],
             cookies: this.getCookies(),
             outside: null
@@ -104,7 +108,7 @@ export default {
                     limited_density: this.config.limited_density,
                     send_rate: this.config.send_rate
                 })
-                .catch(error => console.log(error));
+                .catch(console.log)
         },
         uploadConfigs() {
             axios
@@ -117,7 +121,7 @@ export default {
                     send_rate: this.config.send_rate
                 })
                 .then(response => { if (response.data.code == 1) this.appendConfig(response.data.cid.toString()) })
-                .catch(error => console.log(error));
+                .catch(console.log)
         },
     },
     mounted() {

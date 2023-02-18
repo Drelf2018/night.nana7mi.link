@@ -2,7 +2,7 @@
     <div id="swiperBox" @mouseenter="stop" @mouseleave="start" :style="{'width': width, 'height': '172px'}">
         <div class="hidden">
             <div id="swiper">
-                <div class="imgDiv" v-for="obj in banner">
+                <div class="imgDiv" v-for="obj in banner" :key="obj">
                     <a :href="obj.link">
                         <img class="swiper-width" :src="obj.url">
                         <img class="swiper-height" :src="obj.url">
@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="dotList">
-            <div class="dot" v-for="i in banner.length - 1" :style="count == i-1 ? 'opacity: 1;' : 'opacity: 0.5;'"></div>
+            <div class="dot" :key="i" v-for="i in banner.length - 1" :style="count == i-1 ? 'opacity: 1;' : 'opacity: 0.5;'"></div>
         </div>
         <ion-icon name="chevron-back-circle" class="btn" style="left: 10px" @click="move(-1)"></ion-icon>
         <ion-icon name="chevron-forward-circle" class="btn" style="right: 10px" @click="move(1)"></ion-icon>
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-    name: 'Swiper',
+    name: 'SwiperVue',
     props: {
         speed: String,
         width: String,
@@ -113,7 +113,7 @@ export default {
         this.updateStyle();
         this.start();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.stop();
     }
 }
