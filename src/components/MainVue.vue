@@ -39,7 +39,7 @@
         </div>
         <ConfigArea :key="config" v-for="config in bots" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
         <ConfigArea :key="config" v-for="config in showConfigs" :name="uid2name[config.owner]" :oconfig="config" :appendConfig="appendConfig" :deleteConfig="deleteConfig"></ConfigArea>
-        <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig()" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
+        <IconBtn name="add-outline" iconColor="rgb(52,120,246)" @click="addBaseConfig" style="width: max-content;margin-bottom:0.5em">添加配置</IconBtn>
       </div>
     </div>
   </div>
@@ -112,8 +112,9 @@ export default {
     },
     showConfigs() {
       let configs = []
-      for(let cid in this.cids) {
-        if (parseInt(cid) < this.configs.length) configs.push(this.configs[parseInt(cid)])
+      for(let i = 0; i < this.cids.length; i++) {
+        let cid = parseInt(this.cids[i])
+        if (cid < this.configs.length) configs.push(this.configs[cid])
       }
       return configs
     },

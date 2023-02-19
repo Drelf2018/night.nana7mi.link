@@ -1,7 +1,7 @@
 <template>
     <div :id="'outside' + cid" class="show-block outside">
         <div id="config-title" class="inputarea" style="display:flex;align-items: center;">
-            <div class="inputInside" style="margin-top: 0 !important;align-items: center;" @click="status ^= 1">
+            <div class="inputInside" style="margin-top: 0 !important;align-items: center;" @click="() => status ^= 1">
                 <ion-icon id="play" name="play-sharp" :style="status ? 'transform: rotate(90deg);' : ''"></ion-icon>
                 <span style="width:100%;margin-right: 0.5em;">
                     {{ this.config.name }}
@@ -55,11 +55,11 @@
             <div v-if="status && cid && !$route.params.roomid" class="inputarea">
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">上传配置</span>
-                    <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)" @click="uploadConfigs()">将此配置上传并署您用户名</IconBtn>
+                    <IconBtn name="cloud-upload-outline" iconColor="rgb(52,120,246)" @click="() => uploadConfigs()">将此配置上传并署您用户名</IconBtn>
                 </div>
                 <div class="inputInside" style="align-items: center;">
                     <span style="width:20%;margin-right: 0.5em;">删除配置</span>
-                    <IconBtn name="trash-outline" iconColor="rgb(232,64,38)" @click="deleteConfig(this.cid)">将此配置从您的账户中删除</IconBtn>
+                    <IconBtn name="trash-outline" iconColor="rgb(232,64,38)" @click="() => deleteConfig(this.cid)">将此配置从您的账户中删除</IconBtn>
                 </div>
             </div>
         </div>
